@@ -72,12 +72,8 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-router.get(
-  "/me",
-  requireAuth,
-  async (req: AuthenticatedRequest, res: Response) => {
-    return res.json({ user: req.user });
-  }
-);
+router.get("/me", requireAuth, async (req: AuthenticatedRequest, res: Response) => {
+  return res.json({ user: req.user });
+});
 
 export default router;
