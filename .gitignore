@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.yarn/
+
+# Build outputs
+.next/
+dist/
+build/
+out/
+.turbo/
+.cache/
+
+# Environment / secrets
+.env
+.env.local
+.env*.local
+*.pem
+
+# Zero-Human / Kimi runtime (never commit — contains API keys & sessions)
+.kimi-code-home/
+.kimi-code/
+.kimi-code-skills/
+.zero-human/PEDANT_BOUNCES
+.zero-human/*.log
+
+# Runtime/editor
+*.log
+.DS_Store
+*.pyc
+__pycache__/
+.venv/
