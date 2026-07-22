@@ -1,0 +1,86 @@
+{
+  "appType": "fullstack",
+  "hostingTarget": "railway",
+  "projectName": "persona-chat-a8",
+  "inferenceProvider": "huggingface",
+  "trainingProfile": "kaggle-unsloth",
+  "attachModelId": "google/flan-t5-small",
+  "monorepoStructure": {
+    "frontend": "apps/frontend",
+    "backend": "apps/backend",
+    "database": "database"
+  },
+  "frontend": {
+    "dir": "apps/frontend",
+    "framework": "nextjs",
+    "output": "standalone",
+    "apiBaseEnvVar": "NEXT_PUBLIC_API_URL",
+    "requiredFiles": [
+      "apps/frontend/railway.toml",
+      "apps/frontend/next.config.js",
+      "apps/frontend/postcss.config.js",
+      "apps/frontend/tailwind.config.ts",
+      "apps/frontend/src/app/globals.css",
+      "apps/frontend/src/app/api/health/route.ts",
+      "apps/frontend/src/lib/api.ts",
+      "apps/frontend/src/app/layout.tsx",
+      "apps/frontend/src/app/page.tsx",
+      "apps/frontend/src/components/Chat.tsx"
+    ]
+  },
+  "backend": {
+    "dir": "apps/backend",
+    "framework": "express",
+    "portEnvVar": "PORT",
+    "databaseUrlEnvVar": "DATABASE_URL",
+    "modelEnvVars": [
+      "FINE_TUNED_MODEL_ID",
+      "HF_MODEL_ID",
+      "LLM_PROVIDER",
+      "HUGGINGFACE_TOKEN"
+    ],
+    "requiredFiles": [
+      "apps/backend/railway.toml",
+      "apps/backend/package.json",
+      "apps/backend/src/index.ts",
+      "apps/backend/src/config.ts",
+      "apps/backend/src/db.ts",
+      "apps/backend/src/routes/health.ts",
+      "apps/backend/src/routes/auth.ts",
+      "apps/backend/src/routes/chat.ts"
+    ],
+    "requiredRoutes": [
+      "GET /health",
+      "POST /api/auth/register",
+      "POST /api/auth/login",
+      "GET /api/auth/me",
+      "POST /api/chat"
+    ],
+    "routeMounts": [
+      {
+        "mount": "/",
+        "file": "apps/backend/src/routes/health.ts",
+        "handlers": ["GET /health"]
+      },
+      {
+        "mount": "/api/auth",
+        "file": "apps/backend/src/routes/auth.ts",
+        "handlers": ["POST /register", "POST /login", "GET /me"]
+      },
+      {
+        "mount": "/api/chat",
+        "file": "apps/backend/src/routes/chat.ts",
+        "handlers": ["POST /"]
+      }
+    ]
+  },
+  "database": {
+    "schemaFile": "database/schema.sql",
+    "requiredTables": ["users"]
+  },
+  "storage": {
+    "type": "database",
+    "provider": "postgresql",
+    "connectionStringEnvVar": "DATABASE_URL"
+  }
+}
