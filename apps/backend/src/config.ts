@@ -9,4 +9,4 @@ export const HUGGINGFACE_TOKEN = process.env.HUGGINGFACE_TOKEN || "";
 export const FINE_TUNED_MODEL_ID = process.env.FINE_TUNED_MODEL_ID;
 export const HF_MODEL_ID = process.env.HF_MODEL_ID;
 export const MODEL_ID =
-  FINE_TUNED_MODEL_ID || HF_MODEL_ID || "google/flan-t5-small";
+  FINE_TUNED_MODEL_ID || HF_MODEL_ID || "meta-llama/Llama-3.1-8B-Instruct";

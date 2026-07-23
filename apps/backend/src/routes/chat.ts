@@ -1,8 +1,10 @@
-import { Router, Request, Response } from "express";
+import { Router, Response } from "express";
 import { requireAuth, AuthenticatedRequest } from "../middleware/auth";
 import { MODEL_ID, HUGGINGFACE_TOKEN, LLM_PROVIDER } from "../config";
 
 const router = Router();
+
+const HF_CHAT_URL = "https://router.huggingface.co/v1/chat/completions";
 
 router.post(
   "/",
@@ -20,17 +22,18 @@ router.post(
     }
 
     try {
-      const hfRes = await fetch(
-        `https://router.huggingface.co/hf-inference/models/${MODEL_ID}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${HUGGINGFACE_TOKEN}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ inputs: message }),
-        }
-      );
+      const hfRes = await fetch(HF_CHAT_URL, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${HUGGINGFACE_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: MODEL_ID,
+          messages: [{ role: "user", content: message }],
+          max_tokens: 512,
+        }),
+      });
 
       if (!hfRes.ok) {
         const detail = await hfRes.text();
@@ -40,19 +43,14 @@ router.post(
         });
       }
 
-      const data = await hfRes.json();
-      let reply = "";
-
-      if (Array.isArray(data)) {
-        const first = data[0];
-        reply =
-          typeof first === "string"
-            ? first
-            : first?.generated_text || JSON.stringify(first);
-      } else if (data && typeof data === "object") {
-        reply = data.generated_text || data.text || JSON.stringify(data);
-      } else {
-        reply = String(data);
+      const data = (await hfRes.json()) as {
+        choices?: Array<{ message?: { content?: string } }>;
+      };
+      const reply = data.choices?.[0]?.message?.content?.trim();
+      if (!reply) {
+        return res.status(502).json({
+          error: "Hugging Face inference returned empty response",
+        });
       }
 
       return res.json({ reply });

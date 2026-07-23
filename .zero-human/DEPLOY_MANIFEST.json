@@ -4,7 +4,7 @@
   "projectName": "persona-chat-a8",
   "inferenceProvider": "huggingface",
   "trainingProfile": "kaggle-unsloth",
-  "attachModelId": "google/flan-t5-small",
+  "attachModelId": "meta-llama/Llama-3.1-8B-Instruct",
   "monorepoStructure": {
     "frontend": "apps/frontend",
     "backend": "apps/backend",
